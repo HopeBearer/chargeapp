@@ -1,12 +1,63 @@
 <script setup>
   // 1. import Header component
   import Header from '@/components/Header.vue'
+  import { userLoginService, userRegisterService } from '@/api/user.js'
+  import { showFailToast, showSuccessToast } from 'vant'
+  import { useRouter } from 'vue-router'
+  import { useUserStore } from '@/stores/index.js'
+
   import { ref } from 'vue'
+  // 路由
+  const router = useRouter()
   // 记录当前页是登录还是注册
   const isLogin = ref('login')
+  const verifyRef = ref(null)
   // 更换当前页记录
   const chanegType = (type) => {
     isLogin.value = type
+    // 重置表单数据
+    formUserInfo.value = {
+      username: '',
+      password: '',
+      verify: '',
+      imgCode: '',
+      type: isLogin.value
+    }
+  }
+
+  // 需要填写 的 表单数据
+  const formUserInfo = ref({
+    username: '',
+    password: '',
+    type: isLogin.value,
+    verify: '',
+    imgCode: ''
+  })
+
+  const userStore = useUserStore()
+  // 提交表单
+  const onSubmit = async () => {
+    if (isLogin.value == 'login') {
+      // console.log('登录')
+      // 发送请求
+      const res = await userLoginService(formUserInfo.value)
+      console.log(res)
+      // 存储token
+      userStore.token = res.data.token
+      showSuccessToast('登录成功')
+      // 登录成功后跳转到首页
+      router.push('/')
+    } else {
+      if (formUserInfo.value.imgCode !== verifyRef.value.verify) {
+        showFailToast('验证码错误')
+        return
+      }
+      // 发送请求
+      await userRegisterService(formUserInfo.value)
+      showSuccessToast('注册成功')
+      // 注册成功后跳转到登录页
+      router.push('/login')
+    }
   }
 </script>
 <template>
@@ -19,7 +70,7 @@
       <div class="form">
         <van-field
           clearable
-          v-model="username"
+          v-model="formUserInfo.username"
           name="username"
           label="账号"
           placeholder="请输入账号"
@@ -27,7 +78,7 @@
         />
         <van-field
           clearable
-          v-model="password"
+          v-model="formUserInfo.password"
           type="password"
           name="password"
           label="密码"
@@ -36,13 +87,15 @@
         />
       </div>
       <div style="margin: 16px 0">
-        <van-button round block type="primary" native-type="submit"> 登录 </van-button>
+        <van-button round block type="primary" @click="onSubmit" native-type="submit">
+          登录
+        </van-button>
         <!--3-->
         <p @click="chanegType('register')" class="change-btn">没有账号，前往注册</p>
       </div>
     </van-form>
     <!--4-->
-    <van-form class="form-wrap" v-if="isLogin == 'register'">
+    <van-form class="form-wrap" v-if="isLogin === 'register'">
       <div class="form">
         <van-field
           clearable
@@ -50,6 +103,7 @@
           name="username"
           label="账号"
           placeholder="请输入账号"
+          autocomplete="off"
           :rules="[{ required: true, message: '请填写账号' }]"
         />
         <van-field
@@ -61,6 +115,18 @@
           placeholder="请输入密码"
           :rules="[{ required: true, message: '请填写密码' }]"
         />
+        <van-field
+          clearable
+          center
+          label="验证码"
+          placeholder="请输入验证码"
+          :rules="[{ required: true, message: '请填写验证码' }]"
+          v-model="verify"
+        >
+          <template #button>
+            <VueImageVerify ref="verifyRef"></VueImageVerify>
+          </template>
+        </van-field>
       </div>
       <div style="margin: 16px 0">
         <van-button round block type="primary" :loading="loading" native-type="submit">

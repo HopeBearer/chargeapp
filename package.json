@@ -13,7 +13,9 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "axios": "^1.8.1",
     "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "postcss-px-to-viewport": "^1.1.1",
     "vant": "^4.9.17",
     "vue": "^3.5.13",

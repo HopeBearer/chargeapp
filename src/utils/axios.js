@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Toast } from 'vant'
+import { showFailToast } from 'vant'
 import { useRouter } from 'vue-router'
 // Create a new instance of axios with some default configuration
 const instance = axios.create({
@@ -31,12 +31,12 @@ instance.interceptors.response.use(
     // 对响应数据做点什么
     const router = useRouter()
     if (typeof response.data !== 'object') {
-      Toast.fail('服务器错误')
+      showFailToast('服务器错误')
       return Promise.reject(response)
     }
     // code非200的情况
     if (response.data.code !== 200) {
-      if (response.data.msg) Toast.fail(response.data.msg)
+      if (response.data.msg) showFailToast(response.data.msg)
       if (response.data.code === 401) {
         router.push('/login')
       }
