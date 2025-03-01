@@ -1,5 +1,5 @@
 <script setup></script>
 <template>
-  <div>我是用户页</div>
+  <div>我是HopeBearer</div>
 </template>
 <style scoped></style>
