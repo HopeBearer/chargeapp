@@ -7,3 +7,6 @@ export const getBillListService = (params) =>
   instance.get('/bill/list', {
     params
   })
+
+// 获取账单详情
+export const getBillDetailService = (id) => instance.get(`/bill/detail?id=${id}`)

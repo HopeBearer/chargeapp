@@ -1,4 +1,5 @@
 <script setup>
+  import useFormatDate from '@/composables/useFormatDate'
   defineProps({
     item: {
       type: Object,
@@ -6,14 +7,9 @@
       default: () => ({})
     }
   })
+  const { formatDate } = useFormatDate()
 
-  const formatDate = (date) => {
-    return (
-      new Date(parseInt(date)).getHours().toString().padStart(2, '0') +
-      ':' +
-      new Date(parseInt(date)).getMinutes().toString().padStart(2, '0')
-    )
-  }
+  //
 </script>
 <template>
   <van-cell-group class="item">
@@ -41,15 +37,18 @@
     <van-cell
       v-for="bill in item.bills"
       :key="bill.id"
-      :class="{ expense: bill.pay_type === 1, income: bill.pay_type === 2 }"
-      :title="bill.type_name"
       :value="bill.pay_type === 1 ? '-' + bill.amount : '+' + bill.amount"
-      :label="formatDate(bill.date) + (bill.remark ? ' | ' + bill.remark : '')"
+      :value-class="{ expense: bill.pay_type === 1, income: bill.pay_type === 2 }"
+      :title="bill.type_name"
+      :label="
+        formatDate(bill.date).slice(formatDate(bill.date).lastIndexOf(' ') + ' '.length) +
+        (bill.remark ? ' | ' + bill.remark : '')
+      "
+      :to="`/detail?id=${bill.id}`"
     />
     <!-- <van-cell class="income" title="餐饮" value="+12.00" label="12:00 | 我是备注信息" /> -->
   </van-cell-group>
 </template>
-
 <style lang="scss" scoped>
   .item {
     border-radius: 10px;
@@ -79,5 +78,8 @@
         }
       }
     }
+  }
+  :deep(.income) {
+    color: $color-text-income;
   }
 </style>

@@ -5,6 +5,7 @@
   import CardItem from './components/CardItem.vue'
   import { getBillListService } from '@/api/account.js'
   import dayjs from 'dayjs'
+  import PopAdd from './components/PopAdd.vue'
   const popTypeRef = ref(null)
 
   // 账单对象
@@ -64,6 +65,7 @@
     }
     loading.value = false
     bill.value.list = bill.value.list.concat(res.data.list)
+    console.log(res.data.list)
     bill.value.totalPage = res.data.total_page
     bill.value.totalExpense = res.data.totalExpense.toFixed(2)
     bill.value.totalIncome = res.data.totalIncome.toFixed(2)
@@ -84,6 +86,13 @@
     refreshing.value = true
     loading.value = true
     onLoad()
+  }
+
+  // 添加账单组件对象
+  const popAddRef = ref(null)
+
+  const popAddToggle = () => {
+    popAddRef.value.toggle()
   }
 </script>
 
@@ -114,10 +123,15 @@
         </van-list>
       </van-pull-refresh>
     </div>
+    <div class="add" @click="popAddToggle">
+      <van-icon name="records"></van-icon>
+    </div>
     <!-- PopType -->
     <PopType ref="popTypeRef" @select="selectType" />
     <!-- PopMonth -->
     <PopMonth ref="popMonthRef" @select="selectMonth"></PopMonth>
+    <!-- PopAdd -->
+    <PopAdd ref="popAddRef"></PopAdd>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -181,5 +195,21 @@
       background-color: #f5f5f5;
       padding: 10px;
     }
+  }
+  .add {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #e9e9e9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    color: #39be77;
   }
 </style>
