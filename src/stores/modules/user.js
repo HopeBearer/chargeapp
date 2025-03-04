@@ -1,3 +1,4 @@
+import { getUserInfoService } from '@/api/user.js'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 export const useUserStore = defineStore(
@@ -9,7 +10,9 @@ export const useUserStore = defineStore(
     // 用户相关
     const userInfo = ref({})
     // 获取用户信息
-    const getUserInfo = () => {
+    const getUserInfo = async () => {
+      const res = await getUserInfoService()
+      console.log(res)
       return userInfo.value
     }
     // 设置用户信息

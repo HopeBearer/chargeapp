@@ -9,3 +9,6 @@ export const userLoginService = ({ username, password }) =>
 
 // 用户注册
 export const userRegisterService = (userInfo) => instance.post('/user/register', userInfo)
+
+// 获取用户信息
+export const getUserInfoService = () => instance.get('/user/get_userinfo')

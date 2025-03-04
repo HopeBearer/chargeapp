@@ -1,9 +1,13 @@
 <script setup>
   import { ref } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { getBillDetailService } from '@/api/account.js'
+  import { useRoute, useRouter } from 'vue-router'
+  import { delBillService, getBillDetailService } from '@/api/account.js'
   import useFormatDate from '@/composables/useFormatDate'
+  import PopAdd from './components/PopAdd.vue'
+  import { showConfirmDialog, showSuccessToast } from 'vant'
+
   const route = useRoute()
+  const router = useRouter()
   const billDetail = ref({})
   const getBillDetail = async () => {
     const res = await getBillDetailService(route.query.id)
@@ -12,6 +16,23 @@
   }
   getBillDetail()
   const { formatDate } = useFormatDate()
+
+  const popAddRef = ref(null)
+  const edit = () => {
+    popAddRef.value.toggle()
+  }
+  const delBill = async () => {
+    await showConfirmDialog({
+      title: '温馨提示',
+      message: '确认删除该账单？'
+    })
+      .then(() => {
+        delBillService(billDetail.value.id)
+        router.replace('/home')
+        showSuccessToast('删除成功')
+      })
+      .catch(() => {})
+  }
 </script>
 <template>
   <div class="detail">
@@ -37,9 +58,15 @@
         </div>
       </div>
       <div class="operation van-hairline--top">
-        <span class="van-hairline--right"><van-icon name="delete" />删除</span>
-        <span><van-icon name="edit" />编辑</span>
+        <span class="van-hairline--right" @click="delBill"><van-icon name="delete" />删除</span>
+        <span @click="edit"><van-icon name="edit" />编辑</span>
       </div>
+      <PopAdd
+        v-if="billDetail.id"
+        ref="popAddRef"
+        :detail="billDetail"
+        @refresh="getBillDetail"
+      ></PopAdd>
     </div>
   </div>
 </template>

@@ -36,7 +36,6 @@
   // click 选择类型
   const selectType = (item) => {
     bill.value.currentSelect = item
-    console.log(bill.value.currentSelect)
     getBillList()
   }
   // 时间组件对象
@@ -65,7 +64,6 @@
     }
     loading.value = false
     bill.value.list = bill.value.list.concat(res.data.list)
-    console.log(res.data.list)
     bill.value.totalPage = res.data.total_page
     bill.value.totalExpense = res.data.totalExpense.toFixed(2)
     bill.value.totalIncome = res.data.totalIncome.toFixed(2)
@@ -131,7 +129,7 @@
     <!-- PopMonth -->
     <PopMonth ref="popMonthRef" @select="selectMonth"></PopMonth>
     <!-- PopAdd -->
-    <PopAdd ref="popAddRef"></PopAdd>
+    <PopAdd ref="popAddRef" @refresh="onRefresh"></PopAdd>
   </div>
 </template>
 <style lang="scss" scoped>
